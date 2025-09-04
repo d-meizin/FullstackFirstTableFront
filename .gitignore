@@ -1,0 +1,77 @@
+ # Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+/build/
+/node_repl_history
+/.npm
+/.yarn/cache
+/.yarn/unplugged
+/.yarn/build-state.yml
+/.yarn/install-state.gz
+/.yarnrc.yml
+/.pnp.*
+/.env
+
+# Cache
+.cache/
+.parcel-cache/
+.eslintcache
+.vite/
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Runtime
+/pids
+/.lib
+/*.tsbuildinfo
+/coverage/
+/.nyc_output
+
+# Environments
+.env.local
+.env.development.local
+.env.test/local
+.env.production.local
+.env.*.local
+
+# VS Code additional
+!.vscode/launch.json
+!.vscode/tasks.json
+*.swp
+*.swo
+*~
+
+# System additional
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+[Tt]humbs.db
+Decktop.ini
+$RECYCLE.BIN/
+
+# Temp
+.tmp/
+.temp/
+
+
