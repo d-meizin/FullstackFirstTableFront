@@ -1,33 +1,57 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from 'react';
+import './App.css';
+import { useReactTable } from '@tanstack/react-table';
+import * as React from 'react';
 
 function App() {
-  const [count, setCount] = useState(0)
+
+  const [employees, setEmployees] = useState([]);
+  const columns = React.useMemo(() => [
+    { Header: "EmployeeId", accessor: "employeeId" },
+    { Header: "Name", accessor: "name" },
+    { Header: "Manager", accessor: "manager" },
+    { Header: "Salary", accessor: "salary" }
+  ], []);
+
+  const data = React.useMemo(() => employees, []);
+  const { getTableProps, getTableBodyProps, HeaderGroups, rows, prepareRow } = useReactTable({ columns, data: employees });
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+
+      <div className='main-container'>
+        <h3>Full Stack Application using React JS, Spring Boot & PostgreSQL</h3>
+        <div className='add-panel'>
+          <div className='addpaneldiv'>
+            <label htmlFor="name">Name</label> <br></br>
+            <input className='addpanelinput' type="text" name="name" id="name" />
+          </div>
+          <div className='addpaneldiv'>
+            <label htmlFor="manager">Manager</label> <br></br>
+            <input className='addpanelinput' type="text" name="manager" id="manager" />
+          </div>
+          <div className='addpaneldiv'>
+            <label htmlFor="salary">Salary</label> <br></br>
+            <input className='addpanelinput' type="text" name="manager" id="manager" />
+          </div>
+          <button className='addBtn'>Add</button>
+          <button className='cancelBtn'>Cancel</button>
+        </div>
+        <input className='searchinput' type="search" name="inputsearch" id="inputsearch" placeholder='Search Employee Here' />
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <table className='table'>
+        <thead>
+          <tr>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+
     </>
   )
 }
