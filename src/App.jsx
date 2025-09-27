@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import './App.css';
-import { useReactTable } from '@tanstack/react-table';
+import { useTable } from 'react-table';
 import * as React from 'react';
 
 function App() {
@@ -14,7 +14,7 @@ function App() {
   ], []);
 
   const data = React.useMemo(() => employees, []);
-  const { getTableProps, getTableBodyProps, HeaderGroups, rows, prepareRow } = useReactTable({ columns, data: employees });
+  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable({ columns, data: employees });
 
   return (
     <>
@@ -32,18 +32,22 @@ function App() {
           </div>
           <div className='addpaneldiv'>
             <label htmlFor="salary">Salary</label> <br></br>
-            <input className='addpanelinput' type="text" name="manager" id="manager" />
+            <input className='addpanelinput' type="text" name="salary" id="salary" />
           </div>
           <button className='addBtn'>Add</button>
           <button className='cancelBtn'>Cancel</button>
         </div>
         <input className='searchinput' type="search" name="inputsearch" id="inputsearch" placeholder='Search Employee Here' />
       </div>
-      <table className='table'>
+      <table className='table' {...getTableProps()}>
         <thead>
-          <tr>
-            <th></th>
-          </tr>
+          {headerGroups.map((hg) => (
+            <tr {...hg.getHeaderGroupProps()} key={hg.id}>
+              {hg.headers.map((column) => (
+                <th {...column.getHeaderProps()} key={column.id}> {column.render("Header")} </th>
+              ))}
+            </tr>
+          ))}
         </thead>
         <tbody>
           <tr>
