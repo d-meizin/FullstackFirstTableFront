@@ -2,6 +2,7 @@ import { useState } from 'react';
 import './App.css';
 import { useTable } from 'react-table';
 import * as React from 'react';
+import axios from "axios";
 
 function App() {
 
@@ -14,7 +15,19 @@ function App() {
   ], []);
 
   const data = React.useMemo(() => employees, []);
-  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable({ columns, data: employees });
+  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow }
+    = useTable({ columns, data: employees });
+
+  const getAllEmployees = () => {
+    axios.get("http://localhost:8085/employees").then((res) => {
+      console.log(res.data);
+      setEmployees(res.data);
+    });
+  }
+
+  React.useEffect(() => {
+    getAllEmployees();
+  }, []);
 
   return (
     <>
@@ -49,12 +62,18 @@ function App() {
             </tr>
           ))}
         </thead>
-        <tbody>
-          <tr>
-            <td></td>
-          </tr>
+        <tbody {...getTableBodyProps()}>
+          {rows.map((row) => {
+            prepareRow(row);
+            return (<tr {...row.getRowProps()} key={row.id} >
+              {row.cells.map((cell) => (
+                <td {...cell.getCellProps()} key={cell.id}> {cell.render("Cell")}</td>
+              ))}
+
+            </tr>)
+          })}
         </tbody>
-      </table>
+      </table >
 
     </>
   )

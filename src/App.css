@@ -56,3 +56,12 @@ h3 {
   width: 60px;
   background-color: rgb(175, 231, 175);
 }
+
+.table {
+  width: 585px;
+  height: fit-content;
+  border: 1px solid;
+  border-collapse: collapse;
+  margin-left: 75px;
+
+}
