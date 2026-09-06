@@ -58,10 +58,46 @@ h3 {
 }
 
 .table {
+  margin-top: 12px;
   width: 585px;
   height: fit-content;
   border: 1px solid;
   border-collapse: collapse;
   margin-left: 75px;
+  text-align: center;
+}
 
+th {
+  border: 1px solid;
+  font-size: 15px;
+  line-height: 18px;
+  background-color: rgb(176, 176, 235);
+}
+
+tr:nth-child(even) {
+  background-color: rgb(207, 181, 231);
+}
+
+td {
+  border: 1px solid;
+  font-size: 15px;
+  line-height: 18px;
+}
+
+.editBtn {
+  border: 1px solid;
+  font-size: 10px;
+  line-height: 12px;
+  width: 50px;
+  border-radius: 5px;
+  background-color: rgb(175, 231, 175);
+}
+
+.deleteBtn {
+  border: 1px solid;
+  font-size: 10px;
+  line-height: 12px;
+  width: 50px;
+  border-radius: 5px;
+  background-color: rgb(236, 154, 77);
 }

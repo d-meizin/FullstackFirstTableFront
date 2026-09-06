@@ -11,10 +11,20 @@ function App() {
     { Header: "EmployeeId", accessor: "employeeId" },
     { Header: "Name", accessor: "name" },
     { Header: "Manager", accessor: "manager" },
-    { Header: "Salary", accessor: "salary" }
+    { Header: "Salary", accessor: "salary" },
+    {
+      Header: "Edit", id: "Edit", accessor: "edit",
+      Cell: props => (<button className='editBtn' onClick={() => handleUpdate(props.cell.row.original)}>Edit</button>)
+    },
+    {
+      Header: "Delete", id: "Delete", accessor: "delete",
+      Cell: props => (<button className='deleteBtn'>Delete</button>)
+    }
   ], []);
 
   const data = React.useMemo(() => employees, []);
+  const [employeeData, setEmployeeData] = useState({ name: "", manager: "", salary: "" });
+  const [showCancel, setShowCancel] = useState(false);
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow }
     = useTable({ columns, data: employees });
 
@@ -23,6 +33,33 @@ function App() {
       console.log(res.data);
       setEmployees(res.data);
     });
+  }
+
+  const handleUpdate = (emp) => {
+    setEmployeeData(emp);
+    setShowCancel(true);
+  }
+
+  const clearAll = () => {
+    setEmployeeData({ name: "", manager: "", salary: "" });
+    getAllEmployees();
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    await axios.post("http://localhost:8085/employees", employeeData).then((res) => {
+      console.log(res.data);
+    });
+    clearAll();
+  }
+
+  const handleCancel = () => {
+    setEmployeeData({ name: "", manager: "", salary: "" });
+    setShowCancel(false);
+  }
+
+  const handleChangle = (e) => {
+    setEmployeeData({ ...employeeData, [e.target.name]: e.target.value });
   }
 
   React.useEffect(() => {
@@ -37,18 +74,18 @@ function App() {
         <div className='add-panel'>
           <div className='addpaneldiv'>
             <label htmlFor="name">Name</label> <br></br>
-            <input className='addpanelinput' type="text" name="name" id="name" />
+            <input className='addpanelinput' value={employeeData.name} type="text" onChange={handleChangle} name="name" id="name" />
           </div>
           <div className='addpaneldiv'>
             <label htmlFor="manager">Manager</label> <br></br>
-            <input className='addpanelinput' type="text" name="manager" id="manager" />
+            <input className='addpanelinput' value={employeeData.manager} type="text" onChange={handleChangle} name="manager" id="manager" />
           </div>
           <div className='addpaneldiv'>
             <label htmlFor="salary">Salary</label> <br></br>
-            <input className='addpanelinput' type="text" name="salary" id="salary" />
+            <input className='addpanelinput' value={employeeData.salary} type="text" onChange={handleChangle} name="salary" id="salary" />
           </div>
-          <button className='addBtn'>Add</button>
-          <button className='cancelBtn'>Cancel</button>
+          <button className='addBtn' onClick={handleSubmit}>{employeeData.employeeId ? "Update" : "Add"}</button>
+          <button className='cancelBtn' disabled={!showCancel} onClick={handleCancel}>Cancel</button>
         </div>
         <input className='searchinput' type="search" name="inputsearch" id="inputsearch" placeholder='Search Employee Here' />
       </div>
