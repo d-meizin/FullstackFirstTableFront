@@ -101,3 +101,7 @@ td {
   border-radius: 5px;
   background-color: rgb(236, 154, 77);
 }
+
+.error {
+  color: red;
+}

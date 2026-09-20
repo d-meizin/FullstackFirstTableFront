@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import './App.css';
-import { useTable } from 'react-table';
+import { useTable, useGlobalFilter, useSortBy } from 'react-table';
 import * as React from 'react';
+import { FaSortUp, FaSortDown, FaSort } from 'react-icons/fa';
 import axios from "axios";
 
 function App() {
@@ -18,15 +19,17 @@ function App() {
     },
     {
       Header: "Delete", id: "Delete", accessor: "delete",
-      Cell: props => (<button className='deleteBtn'>Delete</button>)
+      Cell: props => (<button className='deleteBtn' onClick={() => handleDelete(props.cell.row.original)}>Delete</button>)
     }
   ], []);
 
   const data = React.useMemo(() => employees, []);
   const [employeeData, setEmployeeData] = useState({ name: "", manager: "", salary: "" });
   const [showCancel, setShowCancel] = useState(false);
-  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow }
-    = useTable({ columns, data: employees });
+  const [errMsg, setErrMsg] = useState("");
+  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow, state, setGlobalFilter }
+    = useTable({ columns, data: employees }, useGlobalFilter, useSortBy);
+  const { globalFilter } = state;
 
   const getAllEmployees = () => {
     axios.get("http://localhost:8085/employees").then((res) => {
@@ -45,21 +48,44 @@ function App() {
     getAllEmployees();
   }
 
+  const handleDelete = async (emp) => {
+    const isConfirmed = window.confirm("Are you sure you want to Delete?");
+    if (isConfirmed) {
+      await axios.delete(`http://localhost:8085/employees/${emp.employeeId}`).then((res) => {
+        console.log(res.data);
+        setEmployees(res.data);
+      });
+    }
+    window.location.reload();
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await axios.post("http://localhost:8085/employees", employeeData).then((res) => {
-      console.log(res.data);
-    });
+    let erromsg = "";
+    if (!employeeData.name || !employeeData.manager || !employeeData.salary) {
+      erromsg = "All fields are required!";
+      setErrMsg(erromsg);
+    }
+    if ((erromsg.length === 0) && employeeData.employeeId) {
+      await axios.patch(`http://localhost:8085/employees/${employeeData.employeeId}`, employeeData).then((res) => {
+        console.log(res.data);
+      });
+    } else if (erromsg.length === 0) {
+      await axios.post("http://localhost:8085/employees", employeeData).then((res) => {
+        console.log(res.data);
+      });
+    }
     clearAll();
   }
 
-  const handleCancel = () => {
+  function handleCancel() {
     setEmployeeData({ name: "", manager: "", salary: "" });
     setShowCancel(false);
   }
 
   const handleChangle = (e) => {
     setEmployeeData({ ...employeeData, [e.target.name]: e.target.value });
+    setErrMsg("");
   }
 
   React.useEffect(() => {
@@ -71,6 +97,7 @@ function App() {
 
       <div className='main-container'>
         <h3>Full Stack Application using React JS, Spring Boot & PostgreSQL</h3>
+        {errMsg && <span className='error'>{errMsg}</span>}
         <div className='add-panel'>
           <div className='addpaneldiv'>
             <label htmlFor="name">Name</label> <br></br>
@@ -87,14 +114,23 @@ function App() {
           <button className='addBtn' onClick={handleSubmit}>{employeeData.employeeId ? "Update" : "Add"}</button>
           <button className='cancelBtn' disabled={!showCancel} onClick={handleCancel}>Cancel</button>
         </div>
-        <input className='searchinput' type="search" name="inputsearch" id="inputsearch" placeholder='Search Employee Here' />
+        <input className='searchinput' value={globalFilter || ""} onChange={(e) => setGlobalFilter(e.target.value)} type="search" name="inputsearch" id="inputsearch" placeholder='Search Employee Here' />
       </div>
       <table className='table' {...getTableProps()}>
         <thead>
           {headerGroups.map((hg) => (
             <tr {...hg.getHeaderGroupProps()} key={hg.id}>
               {hg.headers.map((column) => (
-                <th {...column.getHeaderProps()} key={column.id}> {column.render("Header")} </th>
+                <th {...column.getHeaderProps(column.getSortByToggleProps())} key={column.id}> {column.render("Header")}
+                  <span>
+                    {column.isSorted
+                      ? column.isSortedDesc
+                        ? <FaSortDown />   // ▼ сортировка по убыванию
+                        : <FaSortUp />     // ▲ сортировка по возрастанию
+                      : <FaSort />         // нейтральная иконка (не отсортировано)
+                    }
+                  </span>
+                </th>
               ))}
             </tr>
           ))}
