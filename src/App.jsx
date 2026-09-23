@@ -14,11 +14,11 @@ function App() {
     { Header: "Manager", accessor: "manager" },
     { Header: "Salary", accessor: "salary" },
     {
-      Header: "Edit", id: "Edit", accessor: "edit",
+      Header: "Edit", id: "Edit", accessor: "edit", disableSortBy: true,
       Cell: props => (<button className='editBtn' onClick={() => handleUpdate(props.cell.row.original)}>Edit</button>)
     },
     {
-      Header: "Delete", id: "Delete", accessor: "delete",
+      Header: "Delete", id: "Delete", accessor: "delete", disableSortBy: true,
       Cell: props => (<button className='deleteBtn' onClick={() => handleDelete(props.cell.row.original)}>Delete</button>)
     }
   ], []);
@@ -123,12 +123,13 @@ function App() {
               {hg.headers.map((column) => (
                 <th {...column.getHeaderProps(column.getSortByToggleProps())} key={column.id}> {column.render("Header")}
                   <span>
-                    {column.isSorted
-                      ? column.isSortedDesc
-                        ? <FaSortDown />   // ▼ сортировка по убыванию
-                        : <FaSortUp />     // ▲ сортировка по возрастанию
-                      : <FaSort />         // нейтральная иконка (не отсортировано)
-                    }
+                    {column.canSort && (
+                      column.isSorted
+                        ? column.isSortedDesc
+                          ? <FaSortUp className="sort-icon" />   // ▼ сортировка по возрастанию
+                          : <FaSortDown className="sort-icon" />     // ▲ сортировка по убыванию
+                        : <FaSort className="sort-icon" />         // нейтральная иконка (не отсортировано)
+                    )}
                   </span>
                 </th>
               ))}
