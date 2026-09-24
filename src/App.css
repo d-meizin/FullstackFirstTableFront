@@ -111,3 +111,22 @@ td {
   margin-left: 8px;
   vertical-align: middle;
 }
+
+.pagediv {
+  margin-top: 5px;
+  margin-left: 75px;
+}
+
+.pageBtn {
+  border: 1px solid;
+  margin-left: 5px;
+  font-size: 10px;
+  line-height: 12px;
+  width: 45px;
+  border-radius: 5px;
+  background-color: rgb(180, 194, 221);
+}
+
+.idx {
+  margin-left: 5px;
+}

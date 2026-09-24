@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import './App.css';
-import { useTable, useGlobalFilter, useSortBy } from 'react-table';
+import { useTable, useGlobalFilter, useSortBy, usePagination } from 'react-table';
 import * as React from 'react';
 import { FaSortUp, FaSortDown, FaSort } from 'react-icons/fa';
 import axios from "axios";
@@ -27,9 +27,9 @@ function App() {
   const [employeeData, setEmployeeData] = useState({ name: "", manager: "", salary: "" });
   const [showCancel, setShowCancel] = useState(false);
   const [errMsg, setErrMsg] = useState("");
-  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow, state, setGlobalFilter }
-    = useTable({ columns, data: employees }, useGlobalFilter, useSortBy);
-  const { globalFilter } = state;
+  const { getTableProps, getTableBodyProps, headerGroups, page, prepareRow, state, setGlobalFilter, pageCount, nextPage, previousPage, canPreviousPage, canNextPage, gotoPage }
+    = useTable({ columns, data: employees, initialState: { pageSize: 5 } }, useGlobalFilter, useSortBy, usePagination);
+  const { globalFilter, pageIndex } = state;
 
   const getAllEmployees = () => {
     axios.get("http://localhost:8085/employees").then((res) => {
@@ -137,7 +137,7 @@ function App() {
           ))}
         </thead>
         <tbody {...getTableBodyProps()}>
-          {rows.map((row) => {
+          {page.map((row) => {
             prepareRow(row);
             return (<tr {...row.getRowProps()} key={row.id} >
               {row.cells.map((cell) => (
@@ -148,7 +148,13 @@ function App() {
           })}
         </tbody>
       </table >
-
+      <div className='pagediv'>
+        <button disabled={!canPreviousPage} className='pageBtn' onClick={() => gotoPage(0)}>First</button>
+        <button disabled={!canPreviousPage} className='pageBtn' onClick={previousPage}>Prev</button>
+        <span className='idx'>{pageIndex + 1} of {pageCount}</span>
+        <button disabled={!canNextPage} className='pageBtn' onClick={nextPage}>Next</button>
+        <button disabled={!canNextPage} className='pageBtn' onClick={() => gotoPage(pageCount - 1)}>Last</button>
+      </div>
     </>
   )
 }
