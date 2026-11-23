@@ -197,6 +197,7 @@ function App() {
       setCurrentUser(res.data);
       setIsAuth(true);
     } catch {
+      console.error('auth/me failed:', err.response?.status, err.message);
       setIsAuth(false);
     }
   };
